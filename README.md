@@ -117,4 +117,17 @@ Greetings for each country are recorded in index.html.
 
 
 ## Lambda@Edge Destroy Issue
-To be described.
+Deleting the replicated Lambda@Edge functions takes time.
+In order to perform this deletion in a timely manner, we first have to remove the function association in the CloudFront distribution.
+To do this on AWS Management Console, go to **Behaviors** tab, select behavior of path pattern **/index.html** and **Edit**, then turn **Origin request** back to **No association** (and **Save changes**).
+
+![Screenshot 2024-02-06 at 20 57 16](https://github.com/sk8393/terraform-cloudfront-lambda-edge/assets/13175031/69d9f0c7-e9c4-44f5-8d32-1bfc70300411)
+
+After waiting for 5 minutes or longer, execute `terraform destroy` to delete resources via Terraform.
+
+Without following this step, you should see an error message like below.
+Even if you saw this error message, you should be able to delete Lambda@Edge function as it has lost association from CloudFront (Terraform deletes CloudFront distribution first, Lambda@Edge function deletion failure happens later).
+
+```
+│ Error: deleting Lambda Function (suitably-smiling-ladybird): operation error Lambda: DeleteFunction, https response error StatusCode: 400, RequestID: 399a9efa-95e0-4cdf-b326-2174f49c106b, InvalidParameterValueException: Lambda was unable to delete arn:aws:lambda:us-east-1:699884809194:function:suitably-smiling-ladybird:1 because it is a replicated function. Please see our documentation for Deleting Lambda@Edge Functions and Replicas.
+```
