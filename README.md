@@ -89,11 +89,31 @@ Do you want to perform these actions?
 
 
 ## Usage
-To be described.
+Once `terraform apply` completed successfully, check domain (e.g. **0123456789abcd.cloudfront.net**) of the new CloudFront distribution.
+Domain can be confirmed from [AWS Management Console](https://us-east-1.console.aws.amazon.com/cloudfront/v4/home).
+If you are not sure which CloudFront distribution is that you created, check it through **terraform.tfstate**.
 
+```
+terraform-cloudfront-lambda-edge $ # Sample command to read Amazon Resource Name (ARN) of CloudFront distribution.  'ECJG9OZREDEUT' is its ID.
+terraform-cloudfront-lambda-edge $ grep distribution terraform.tfstate | grep '"arn":'
+            "arn": "arn:aws:cloudfront::699884809194:distribution/ECJG9OZREDEUT",
+```
 
-## Web Sequence Diagram
-To be described.
+Once you accessed to the domain URL, you will be redirected to 1) **index.html**, or 2) **de/index.html**, or 3) **ie/index.html**.
+This corresponds to the objects structure of the origin [Amazon Simple Storage Service (S3)](https://aws.amazon.com/s3/) bucket as below (technically speaking, S3 has no concept of directory).
+
+```
+S3 bucket/
+  |- index.html
+  |- de/
+  |    |- index.html
+  |- ie/
+       |- index.html
+```
+
+According to the country code set in **CloudFront-Viewer-Country** header, requests are redirected to either **de/index.html** in case of Germany, or **ie/index.html** in case of Ireland by Lambda@Edge.
+For all other cases, request goes **index.html**.
+Greetings for each country are recorded in index.html.
 
 
 ## Lambda@Edge Destroy Issue
