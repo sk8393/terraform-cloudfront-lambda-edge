@@ -1,7 +1,9 @@
 # CloudFront with Lambda@Edge
 
 ## Summary
-To be described.
+This is a sample Terraform code to deploy CloudFront distribution with S3 bucket as an origin.
+Sample Lambda@Edge function is also included to redirect HTTP request according to from which country the access was made.
+Terraform code and Python code for Lambda@Edge function are designed to be as simple as possible, so this can be an entry point to manage CloudFront through Terraform.
 
 
 ## Environment used for Verification
